@@ -1,6 +1,7 @@
 // import { onSubmit } from './pic-api.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import Notiflix from 'notiflix';
 
 const form = document.querySelector('.search-form');
 const searchQuery = document.querySelector('input[name="searchQuery"]');
@@ -32,6 +33,11 @@ function searchImg(inputValue) {
       const objectsResponse = response.data.hits;
       createGalleryItems(objectsResponse);
       console.log(objectsResponse);
+      if (objectsResponse.length === 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
     })
     .catch(function (error) {
       console.log(error);
