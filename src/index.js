@@ -8,12 +8,15 @@ const searchQuery = document.querySelector('input[name="searchQuery"]');
 form.addEventListener('submit', onSubmit);
 const axios = require('axios').default;
 const galleryItems = document.querySelector('.gallery');
+const loadMoreBtn = document.querySelector('.load-more');
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '37263495-0dc17f57687021d8824007ffe';
 
 function onSubmit(event) {
   event.preventDefault();
+  galleryItems.innerHTML = '';
+
   const inputValue = searchQuery.value;
   searchImg(inputValue);
 }
@@ -27,10 +30,11 @@ function searchImg(inputValue) {
         image_type: 'photo',
         orientation: 'horizontal',
         safesearch: 'true',
+        per_page: 40,
       },
     })
     .then(response => {
-      const objectsResponse = response.data.hits;
+      let objectsResponse = response.data.hits;
       createGalleryItems(objectsResponse);
       console.log(objectsResponse);
       if (objectsResponse.length === 0) {
@@ -77,3 +81,5 @@ function createGalleryItems(objectsResponse) {
     captionsData: 'alt',
   });
 }
+
+// loadMoreBtn.classList.remove(hidden);
