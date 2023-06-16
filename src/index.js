@@ -10,6 +10,7 @@ const axios = require('axios').default;
 const galleryItems = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
 let pageNumber = 1;
+let totalUserHits = 0;
 
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '37263495-0dc17f57687021d8824007ffe';
@@ -18,6 +19,7 @@ function onSubmit(event) {
   event.preventDefault();
   galleryItems.innerHTML = '';
   pageNumber = 1;
+  totalUserHits = 0;
 
   const inputValue = searchQuery.value;
   searchImg(inputValue, pageNumber);
@@ -40,10 +42,17 @@ function searchImg(inputValue, page) {
       let objectsResponse = response.data.hits;
       createGalleryItems(objectsResponse);
       console.log(objectsResponse);
+      let userHits = objectsResponse.length;
+      console.log(objectsResponse.length);
+      const totalHits = response.data.totalHits;
+      countHits(userHits, totalHits);
+      console.log(response.data.totalHits);
       if (objectsResponse.length === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+      } else if (objectsResponse.length >= 120) {
+        console.log('error' - 120);
       }
     })
     .catch(function (error) {
@@ -52,6 +61,17 @@ function searchImg(inputValue, page) {
     .finally(function () {
       pageNumber = page;
     });
+}
+function countHits(userHits, totalHits) {
+  console.log(userHits);
+  totalUserHits += userHits;
+  console.log(totalUserHits);
+  if (totalUserHits >= totalHits) {
+    Notiflix.Notify.failure(
+      `We're sorry, but you've reached the end of search results.`
+    );
+    toggleHidden(loadMoreBtn, 'add');
+  }
 }
 
 function createGalleryItems(objectsResponse) {
@@ -96,5 +116,11 @@ loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onLoadMore(event) {
   event.preventDefault();
+  //   if (event.hits <= 120) {
+
   searchImg(searchQuery.value, pageNumber + 1);
+  toggleHidden(loadMoreBtn, 'add');
+  //   } else {
+  //     console.log('Error');
+  //   }
 }
