@@ -117,8 +117,8 @@ loadMoreBtn.addEventListener('click', onLoadMore);
 function onLoadMore(event) {
   event.preventDefault();
   searchImg(searchQuery.value, pageNumber + 1);
-  setTimeout(smoothScroll, 300);
   toggleHidden(loadMoreBtn, 'add');
+  setTimeout(smoothScroll, 300);
 }
 
 function toggleHidden(elem, m = 'add') {
