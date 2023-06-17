@@ -8,6 +8,7 @@ form.addEventListener('submit', onSubmit);
 const axios = require('axios').default;
 const galleryItems = document.querySelector('.gallery');
 const loadMoreBtn = document.querySelector('.load-more');
+loadMoreBtn.addEventListener('click', onLoadMore);
 let pageNumber = 1;
 let totalUserHits = 0;
 
@@ -28,9 +29,9 @@ function cleanPrevious() {
   totalUserHits = 0;
 }
 
-function searchImg(inputValue, page) {
-  return axios
-    .get(BASE_URL, {
+async function searchImg(inputValue, page) {
+  try {
+    const response = await axios.get(BASE_URL, {
       params: {
         key: API_KEY,
         q: inputValue,
@@ -40,32 +41,32 @@ function searchImg(inputValue, page) {
         per_page: 40,
         page: page,
       },
-    })
-    .then(response => {
-      let objectsResponse = response.data.hits;
-      let userHits = objectsResponse.length;
-      const totalHits = response.data.totalHits;
-      createGalleryItems(objectsResponse);
-      countHits(userHits, totalHits);
-      if (objectsResponse.length === 0 || totalUserHits >= totalHits) {
-        toggleHidden(loadMoreBtn, 'add');
-      } else {
-        toggleHidden(loadMoreBtn, 'remove');
-      }
-      if (objectsResponse.length === 0) {
-        Notiflix.Notify.failure(
-          'Sorry, there are no images matching your search query. Please try again.'
-        );
-      } else if (page <= 1) {
-        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-    })
-    .finally(function () {
-      pageNumber = page;
     });
+
+    let objectsResponse = response.data.hits;
+    let userHits = objectsResponse.length;
+    const totalHits = response.data.totalHits;
+    createGalleryItems(objectsResponse);
+    countHits(userHits, totalHits);
+
+    if (objectsResponse.length === 0 || totalUserHits >= totalHits) {
+      toggleHidden(loadMoreBtn, 'add');
+    } else {
+      toggleHidden(loadMoreBtn, 'remove');
+    }
+
+    if (objectsResponse.length === 0) {
+      Notiflix.Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    } else if (page <= 1) {
+      Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+    }
+
+    pageNumber = page;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function countHits(userHits, totalHits) {
@@ -110,13 +111,11 @@ function createGalleryItems(objectsResponse) {
   lightbox.refresh();
 }
 
-loadMoreBtn.addEventListener('click', onLoadMore);
-
 function onLoadMore(event) {
   event.preventDefault();
   searchImg(searchQuery.value, pageNumber + 1);
   toggleHidden(loadMoreBtn, 'add');
-  setTimeout(smoothScroll, 500);
+  setTimeout(smoothScroll, 400);
 }
 
 function smoothScroll() {
