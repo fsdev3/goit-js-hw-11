@@ -1,4 +1,3 @@
-// import { onSubmit } from './pic-api.js';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import Notiflix from 'notiflix';
@@ -44,10 +43,9 @@ function searchImg(inputValue, page) {
     })
     .then(response => {
       let objectsResponse = response.data.hits;
-      createGalleryItems(objectsResponse);
       let userHits = objectsResponse.length;
       const totalHits = response.data.totalHits;
-      console.log(objectsResponse.length);
+      createGalleryItems(objectsResponse);
       countHits(userHits, totalHits);
       if (objectsResponse.length === 0 || totalUserHits >= totalHits) {
         toggleHidden(loadMoreBtn, 'add');
@@ -118,11 +116,7 @@ function onLoadMore(event) {
   event.preventDefault();
   searchImg(searchQuery.value, pageNumber + 1);
   toggleHidden(loadMoreBtn, 'add');
-  setTimeout(smoothScroll, 300);
-}
-
-function toggleHidden(elem, m = 'add') {
-  elem.classList[m]('hidden');
+  setTimeout(smoothScroll, 500);
 }
 
 function smoothScroll() {
@@ -130,4 +124,8 @@ function smoothScroll() {
     top: window.innerHeight / 1.03,
     behavior: 'smooth',
   });
+}
+
+function toggleHidden(elem, m = 'add') {
+  elem.classList[m]('hidden');
 }
