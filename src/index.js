@@ -15,6 +15,10 @@ let totalUserHits = 0;
 const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '37263495-0dc17f57687021d8824007ffe';
 
+window.addEventListener('DOMContentLoaded', () => {
+  searchImg('any', pageNumber);
+});
+
 function onSubmit(event) {
   event.preventDefault();
   cleanPrevious();
